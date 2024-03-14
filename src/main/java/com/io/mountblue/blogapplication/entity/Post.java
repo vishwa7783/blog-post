@@ -35,7 +35,8 @@ public class Post {
     private String updatedAt;
 
     @ManyToOne(fetch= FetchType.LAZY, cascade = {
-            CascadeType.DETACH,CascadeType.PERSIST,
+            CascadeType.DETACH,
+            CascadeType.PERSIST,
             CascadeType.REFRESH,CascadeType.MERGE})
     @JoinColumn(name = "author")
     private User author;
@@ -138,6 +139,13 @@ public class Post {
 
     public void setComments(List<Comment> comments) {
         this.comments = comments;
+    }
+
+    public void addTag(Tag tag){
+        if(tags == null){
+            tags = new ArrayList<>();
+        }
+        tags.add(tag);
     }
 }
 

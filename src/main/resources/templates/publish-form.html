@@ -26,12 +26,15 @@
 
 <form th:action="@{/publishform}"  th:object="${post}" method="POST">
 
+    <input  th:field="*{id}" type="hidden"/>
     <input type="text" placeholder="Title" th:field="*{title}"/>
     <br />
-    <input type="text" placeholder="Tags" th:field="*{tags}"/>
-    <input type="hidden" placeholder="Tags" th:field="*{createdAt}"/>
+    <input type="text" placeholder="Tags" name="tag" th:value="${tagsAsString}"/>
+
+
+    <input type="hidden" th:field="*{createdAt}"/>
     <br>
-    <textarea placeholder="Write Your Blog Here..." th:field="*{content}"></textarea>
+    <textarea type="text" placeholder="Write Your Blog Here..." th:field="*{content}"></textarea>
     <br />
     <input type="submit" value="Publish">
 </form>

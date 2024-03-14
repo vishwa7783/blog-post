@@ -3,6 +3,7 @@ package com.io.mountblue.blogapplication.entity;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
 import java.util.List;
 @Entity
 @Table(name = "posts")
@@ -36,15 +37,15 @@ public class Post {
     @ManyToOne(fetch= FetchType.LAZY, cascade = {
             CascadeType.DETACH,CascadeType.PERSIST,
             CascadeType.REFRESH,CascadeType.MERGE})
-    @JoinColumn(name = "author_id")
+    @JoinColumn(name = "author")
     private User author;
 
-    @JoinTable(name = "post_tags",
-            joinColumns = @JoinColumn(name = "post_id"),
-            inverseJoinColumns = @JoinColumn(name = "tag_id"))
     @ManyToMany(fetch = FetchType.LAZY,cascade = {
             CascadeType.PERSIST,CascadeType.DETACH,
             CascadeType.MERGE,CascadeType.REFRESH})
+    @JoinTable(name = "post_tags",
+            joinColumns = @JoinColumn(name = "post_id"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id"))
     private List<Tag> tags;
 
     @OneToMany(cascade = CascadeType.ALL)

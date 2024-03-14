@@ -21,16 +21,22 @@ public class Tag {
     @Column(name = "updated_at")
     private String updatedAt;
 
-    @JoinTable(name = "post_tags",
-            joinColumns = @JoinColumn(name = "tag_id"),
-            inverseJoinColumns = @JoinColumn(name = "post_id"))
     @ManyToMany(fetch = FetchType.LAZY,cascade = {
             CascadeType.PERSIST,CascadeType.DETACH,
             CascadeType.MERGE,CascadeType.REFRESH})
+    @JoinTable(name = "post_tags",
+            joinColumns = @JoinColumn(name = "tag_id"),
+            inverseJoinColumns = @JoinColumn(name = "post_id"))
     private List<Post> posts;
 
     public int getId() {
         return id;
+    }
+    public Tag(){
+    }
+
+    public Tag(String name) {
+        this.name = name;
     }
 
     public void setId(int id) {

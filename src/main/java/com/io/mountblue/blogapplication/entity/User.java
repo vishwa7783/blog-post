@@ -25,6 +25,15 @@ public class User {
     @OneToMany(mappedBy = "author",cascade = CascadeType.ALL)
     private List<Post> posts;
 
+    public User() {
+    }
+
+    public User(String name, String email, String password) {
+        this.name = name;
+        this.email = email;
+        this.password = password;
+    }
+
     public int getId() {
         return id;
     }
@@ -55,5 +64,10 @@ public class User {
 
     public void setPosts(List<Post> posts) {
         this.posts = posts;
+    }
+
+    @Override
+    public String toString() {
+        return name;
     }
 }

@@ -40,4 +40,10 @@ public class PostServiceImpl implements PostService {
         }
         return post;
     }
+
+    @Override
+    public void deletePost(Post post) {
+        postRepository.delete(post);
+    }
+
 }

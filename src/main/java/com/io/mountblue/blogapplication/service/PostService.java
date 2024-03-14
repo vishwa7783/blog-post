@@ -10,7 +10,10 @@ import java.util.Optional;
 
 public interface PostService {
     void publish(Post post);
+
     List<Post> getPosts();
 
     Post findPostById(int id);
+
+    void deletePost(Post post);
 }

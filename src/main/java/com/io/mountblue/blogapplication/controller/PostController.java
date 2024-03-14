@@ -45,7 +45,7 @@ public class PostController {
     @PostMapping("/publishform")
     public String publishForm(HttpServletRequest request, @ModelAttribute("post") Post post){
         User user = new User("v","v10@gmail.com","1234");
-        System.out.println("Publish form");
+
         Date currentDate = new Date();
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String date = dateFormat.format(currentDate);
@@ -57,9 +57,10 @@ public class PostController {
         for(Tag tag : tagsInDB){
             tagsNameInDB.add(tag.getName());
         }
-        List<Tag> postTagList = new ArrayList<>();
 
+        List<Tag> postTagList = new ArrayList<>();
         post.setTags(postTagList);
+
         for(String tag: tagsInPost){
             if(!tagsNameInDB.contains(tag)){
                 Tag newTag = new Tag();
@@ -74,8 +75,8 @@ public class PostController {
         post.setTags(postTagList);
 
         User theUser = userService.findUserById(12);
-
         post.setAuthor(theUser);
+
         post.setPublishedAt(date);
         post.setPublished(true);
         post.setUpdatedAt(date);
@@ -112,5 +113,12 @@ public class PostController {
         model.addAttribute("post",post);
 
         return "publish-form";
+    }
+
+    @GetMapping("/delete/{postId}")
+    public String deletePost(@PathVariable("postId")int id, Model model){
+        Post post = postService.findPostById(id);
+        postService.deletePost(post);
+        return "redirect:/";
     }
 }

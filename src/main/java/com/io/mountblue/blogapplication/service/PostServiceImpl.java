@@ -35,8 +35,7 @@ public class PostServiceImpl implements PostService {
             post = result.get();
         }
         else {
-            // we didn't find the employee
-            throw new RuntimeException("Did not find employee id - " + id);
+            throw new RuntimeException("Did not find post id - " + id);
         }
         return post;
     }

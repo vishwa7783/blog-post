@@ -6,4 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 public interface CommentService {
     void saveComment(Comment comment);
+
+    void deleteCommentById(int id);
+
+    Comment findCommentById(int id);
 }

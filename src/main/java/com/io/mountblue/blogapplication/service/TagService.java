@@ -11,5 +11,4 @@ public interface TagService {
 
     void saveTag(Tag tag);
 
-    void saveTagToPostAndDb()
 }

@@ -42,9 +42,10 @@
 </form>
 
 <div class="update-delete">
-<a th:href="@{'/update/'+${post.id}}"><button>Update</button></a>
+    <a th:href="@{'/update/'+${post.id}}"><button>Update</button></a>
 
-<a th:href="@{'/delete/'+${post.id}}"><button>Delete</button></a>
+    <a th:href="@{'/delete/'+${post.id}}"><button>Delete</button></a>
+    <a th:href="@{'/post/comment/'+${post.id}}"><button>Comment</button></a>
 </div>
 
 </body>

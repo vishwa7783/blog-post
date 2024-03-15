@@ -20,13 +20,22 @@ public class Comment {
     private String comment;
 
     @Column(name = "post_id")
-    private String postId;
+    private int postId;
 
     @Column(name = "created_at")
     private String createdAt;
 
     @Column(name = "updated_at")
     private String updatedAt;
+
+    public Comment() {
+    }
+
+    public Comment(String name, String email, String comment) {
+        this.name = name;
+        this.email = email;
+        this.comment = comment;
+    }
 
     public int getId() {
         return id;
@@ -60,11 +69,11 @@ public class Comment {
         this.comment = comment;
     }
 
-    public String getPostId() {
+    public int getPostId() {
         return postId;
     }
 
-    public void setPostId(String postId) {
+    public void setPostId(int postId) {
         this.postId = postId;
     }
 

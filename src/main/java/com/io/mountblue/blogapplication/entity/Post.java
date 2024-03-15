@@ -147,5 +147,12 @@ public class Post {
         }
         tags.add(tag);
     }
+
+    public void addComment(Comment comment){
+        if(comments == null){
+            comments = new ArrayList<>();
+        }
+        comments.add(comment);
+    }
 }
 

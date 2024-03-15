@@ -16,6 +16,7 @@
             margin: 0;
             padding: 20px 0;
             font-size: 24px;
+            text-align:center;
         }
 
         a {
@@ -34,7 +35,7 @@
             border-radius: 10px;
             border: 2px solid black;
             margin-right: 20px;
-            width: 550px;
+            width: 40%;
         }
 
         .post-container h2 {
@@ -43,10 +44,7 @@
 
         .post-container p {
             margin: 0;
-            display: -webkit-box;
-            -webkit-box-orient: vertical;
             overflow: hidden;
-            -webkit-line-clamp: 5;
         }
 
         .post-list {
@@ -66,7 +64,7 @@
             <h2 th:text="${post.title}"></h2>
             <span th:text="${post.author}"> </span>
              <span th:text="${post.publishedAt}"></span>
-            <p th:text="${post.content}"></p>
+            <p th:text="${post.excerpt}"></p>
         </a>
     </div>
 </div>

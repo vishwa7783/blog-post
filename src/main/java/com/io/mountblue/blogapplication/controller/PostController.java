@@ -46,6 +46,16 @@ public class PostController {
     public String publishForm(HttpServletRequest request, @ModelAttribute("post") Post post){
         User user = new User("v","v10@gmail.com","1234");
 
+
+        StringBuilder excerpt = new StringBuilder();
+        if ( post.getContent().length() > 151) {
+            System.out.println("If comd");
+            excerpt.append(post.getContent(), 0, 150);
+        } else {
+            excerpt.append(post.getContent());
+        }
+
+
         Date currentDate = new Date();
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String date = dateFormat.format(currentDate);
@@ -81,7 +91,7 @@ public class PostController {
         post.setPublished(true);
         post.setUpdatedAt(date);
         post.setCreatedAt(date);
-        post.setExcerpt(post.getContent());
+        post.setExcerpt(excerpt.toString());
         postService.publish(post);
 
         return "redirect:/";

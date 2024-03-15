@@ -10,4 +10,6 @@ public interface TagService {
     Tag findTagByName(String name);
 
     void saveTag(Tag tag);
+
+    void saveTagToPostAndDb()
 }

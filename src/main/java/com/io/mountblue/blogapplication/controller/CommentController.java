@@ -19,11 +19,11 @@ public class CommentController {
     CommentService commentService;
 
     @GetMapping("/post/comment/{postId}")
-    public String addComment(@PathVariable("postId")int id, Model model){
+    public String writeComment(@PathVariable("postId")int id, Model model){
         Post post = postService.findPostById(id);
-        Integer presentComment = 0;
+        Integer presentCommentId = 0;
         model.addAttribute("post", post);
-        model.addAttribute("presentComment", presentComment);
+        model.addAttribute("presentCommentId", presentCommentId);
         return "comment";
     }
 
@@ -31,8 +31,6 @@ public class CommentController {
     public String saveComment(@RequestParam("postId")int id,
                               @ModelAttribute("post")Post post, @RequestParam("commentText")String comment,
                              @ModelAttribute("presentCommentId") int presentCommentId){
-
-        System.out.println("pred"+presentCommentId);
         if(presentCommentId == 0) {
             Comment theComment = new Comment("anonymous", "anonymous@gmail.com", comment);
             post.addComment(theComment);

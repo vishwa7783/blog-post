@@ -19,6 +19,20 @@
             text-align:center;
         }
 
+        #sort-search{
+            display:flex;
+            justify-content:flex-end;
+        }
+        .search-post{
+            text-align:right;
+            margin-right:10px;
+            margin-left:8px;
+        }
+
+        .search-button{
+            font-size:15px;
+        }
+
         a {
             display: block;
             margin: 10px 0;
@@ -56,18 +70,34 @@
     </style>
 </head>
 <body>
-<h1>My Blog Application</h1>
-<a th:href="@{/newpost}">Create New Post</a>
-<div class="post-list">
-    <div class="post-container" th:each="post : ${posts}">
-        <a th:href="@{'/post/'+${post.id}}">
-            <h2 th:text="${post.title}"></h2>
-            <span th:text="${post.author}"> </span>
-             <span th:text="${post.publishedAt}"></span>
-            <p th:text="${post.excerpt}"></p>
-        </a>
+    <h1>My Blog Application</h1>
+    <div id="sort-search">
+        <form th:action="@{/}" method="post">
+            <select name="selectedOption" >
+                <option value="">Sort By</option>
+                <option value="date">Published Date</option>
+                <option value="title">Title</option>
+            </select>
+            <button type="submit">Submit</button>
+        </form>
+
+        <form class="search-post" th:action="@{/search}" method="get">
+            <input class="search-button" type="text" name="field" placeholder="Enter your search field">
+            <button class="search-button" type="submit">Search</button>
+        </form>
     </div>
-</div>
+    <a th:href="@{/newpost}">Create New Post</a>
+
+    <div class="post-list">
+        <div class="post-container" th:each="post : ${posts}">
+            <a th:href="@{'/post/'+${post.id}}">
+                <h2 th:text="${post.title}"></h2>
+                <span th:text="${post.author}"> </span>
+                 <span th:text="${post.publishedAt}"></span>
+                <p th:text="${post.excerpt}"></p>
+            </a>
+        </div>
+    </div>
 </body>
 
 

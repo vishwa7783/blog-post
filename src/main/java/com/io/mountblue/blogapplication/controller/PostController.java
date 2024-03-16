@@ -6,7 +6,6 @@ import com.io.mountblue.blogapplication.entity.User;
 import com.io.mountblue.blogapplication.service.PostService;
 import com.io.mountblue.blogapplication.service.TagService;
 import com.io.mountblue.blogapplication.service.UserService;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -30,7 +29,6 @@ public class PostController {
     public String showPosts(Model model){
         List<Post> posts = postService.getPosts();
         model.addAttribute("posts",posts);
-
         return "show-posts";
     }
 
@@ -38,60 +36,63 @@ public class PostController {
     public String showPublishForm(Model model){
         Post post = new Post();
         model.addAttribute("post",post);
-
+        model.addAttribute("presentPostId", 0);
         return "publish-form";
     }
 
     @PostMapping("/publishform")
-    public String publishForm(HttpServletRequest request, @ModelAttribute("post") Post post){
-        User user = new User("v","v10@gmail.com","1234");
-
-
-        StringBuilder excerpt = new StringBuilder();
-        if ( post.getContent().length() > 151) {
-            System.out.println("If comd");
-            excerpt.append(post.getContent(), 0, 150);
-        } else {
-            excerpt.append(post.getContent());
-        }
-
-
+    public String publishForm( @ModelAttribute("post") Post post,@RequestParam("tag") String tags, @ModelAttribute("presentPostId") int presentPostId){
         Date currentDate = new Date();
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String date = dateFormat.format(currentDate);
 
-        String tags = request.getParameter("tag");
         List<String> tagsInPost = Arrays.asList(tags.split(","));
         List<Tag> tagsInDB = tagService.findAllTags();
-        Set<String> tagsNameInDB =new HashSet<>();
-        for(Tag tag : tagsInDB){
+        Set<String> tagsNameInDB = new HashSet<>();
+        for (Tag tag : tagsInDB) {
             tagsNameInDB.add(tag.getName());
         }
 
         List<Tag> postTagList = new ArrayList<>();
         post.setTags(postTagList);
 
-        for(String tag: tagsInPost){
-            if(!tagsNameInDB.contains(tag)){
+        for (String tag : tagsInPost) {
+            if (!tagsNameInDB.contains(tag)) {
                 Tag newTag = new Tag();
                 newTag.setName(tag);
                 tagService.saveTag(newTag);
                 postTagList.add(newTag);
-            }else {
+            } else {
                 Tag newTag = tagService.findTagByName(tag);
                 postTagList.add(newTag);
             }
         }
-        post.setTags(postTagList);
 
+        StringBuilder excerpt = new StringBuilder();
+        if (post.getContent().length() > 151) {
+            excerpt.append(post.getContent(), 0, 150);
+        } else {
+            excerpt.append(post.getContent());
+        }
+
+        post.setTags(postTagList);
         User theUser = userService.findUserById(12);
         post.setAuthor(theUser);
 
-        post.setPublishedAt(date);
-        post.setPublished(true);
-        post.setUpdatedAt(date);
-        post.setCreatedAt(date);
+        if(presentPostId == 0) {
+            User user = new User("v", "v10@gmail.com", "1234");
+            post.setPublishedAt(date);
+            post.setUpdatedAt(date);
+            post.setCreatedAt(date);
+
+        }
+        else{
+            post.setUpdatedAt(date);
+            post.setPublishedAt(post.getCreatedAt());
+        }
+
         post.setExcerpt(excerpt.toString());
+        post.setPublished(true);
         postService.publish(post);
 
         return "redirect:/";
@@ -121,6 +122,7 @@ public class PostController {
 
         model.addAttribute("tagsAsString",tagAsString);
         model.addAttribute("post",post);
+        model.addAttribute("presentPostId",post.getId());
 
         return "publish-form";
     }
@@ -130,5 +132,21 @@ public class PostController {
         Post post = postService.findPostById(id);
         postService.deletePost(post);
         return "redirect:/";
+    }
+
+    @PostMapping("/")
+    public String sortPosts(@ModelAttribute("selectedOption") String selectedOption, Model model){
+        if(selectedOption.equals("date")) {
+            List<Post> posts = postService.findAllPostSortedByDate();
+            model.addAttribute("posts", posts);
+        }
+        else if(selectedOption.equals("title")){
+            List<Post> posts = postService.findAllPostSortedByTitle();
+            model.addAttribute("posts", posts);
+        }else{
+            List<Post> posts = postService.getPosts();
+            model.addAttribute("posts",posts);
+        }
+        return "show-posts";
     }
 }

@@ -2,6 +2,8 @@ package com.io.mountblue.blogapplication.service;
 
 import com.io.mountblue.blogapplication.dao.PostRepository;
 import com.io.mountblue.blogapplication.entity.Post;
+import com.io.mountblue.blogapplication.entity.Tag;
+import com.io.mountblue.blogapplication.entity.User;
 import org.springframework.stereotype.Service;
 
 import javax.swing.text.html.Option;
@@ -53,6 +55,11 @@ public class PostServiceImpl implements PostService {
     @Override
     public List<Post> findAllPostSortedByTitle() {
         return postRepository.findAllByOrderByTitle();
+    }
+
+    @Override
+    public List<Post> findBySearchField(String authorName, String title, String tagName, String content) {
+        return postRepository.findAllByAuthorNameContainingOrTitleContainingOrTagsNameContainingOrContentContaining(authorName, title, tagName, content);
     }
 
 }

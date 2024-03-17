@@ -35,9 +35,9 @@ public class Tag {
     public Tag(){
     }
 
-//    public Tag(String name) {
-//        this.name = name;
-//    }
+    public Tag(String name) {
+        this.name = name;
+    }
 
     public void setId(int id) {
         this.id = id;

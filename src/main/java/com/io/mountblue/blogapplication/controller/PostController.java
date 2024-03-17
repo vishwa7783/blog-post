@@ -149,4 +149,14 @@ public class PostController {
         }
         return "show-posts";
     }
+
+    @GetMapping("/search")
+    public String searchPosts(@ModelAttribute("field") String field, Model model){
+        List<Post> posts = postService.findBySearchField(field,field,field,field);
+        model.addAttribute("posts", posts);
+        return "show-posts";
+    }
+
+
+
 }

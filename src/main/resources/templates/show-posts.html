@@ -4,70 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Blog Application</title>
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: Arial, sans-serif;
-            background-color: white;
-        }
+    <link rel="stylesheet" href="style-show-posts.css">
 
-        h1 {
-            margin: 0;
-            padding: 20px 0;
-            font-size: 24px;
-            text-align:center;
-        }
-
-        #sort-search{
-            display:flex;
-            justify-content:flex-end;
-        }
-        .search-post{
-            text-align:right;
-            margin-right:10px;
-            margin-left:8px;
-        }
-
-        .search-button{
-            font-size:15px;
-        }
-
-        a {
-            display: block;
-            margin: 10px 0;
-            padding: 10px 15px;
-            background-color: white;
-            color: black;
-            text-decoration: none;
-            text-align: center;
-        }
-
-        .post-container {
-            margin-top: 20px;
-            padding: 20px;
-            border-radius: 10px;
-            border: 2px solid black;
-            margin-right: 20px;
-            width: 40%;
-        }
-
-        .post-container h2 {
-            margin-top: 0;
-        }
-
-        .post-container p {
-            margin: 0;
-            overflow: hidden;
-        }
-
-        .post-list {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-around;
-            padding: 0 20px;
-        }
-    </style>
 </head>
 <body>
     <h1>My Blog Application</h1>
@@ -82,20 +20,22 @@
         </form>
 
         <form class="search-post" th:action="@{/search}" method="get">
-            <input class="search-button" type="text" name="field" placeholder="Enter your search field">
+            <input class="search-button" type="text" name="field"  placeholder="Enter your search field">
             <button class="search-button" type="submit">Search</button>
         </form>
     </div>
     <a th:href="@{/newpost}">Create New Post</a>
+    <div class="main">
 
-    <div class="post-list">
-        <div class="post-container" th:each="post : ${posts}">
-            <a th:href="@{'/post/'+${post.id}}">
-                <h2 th:text="${post.title}"></h2>
-                <span th:text="${post.author}"> </span>
-                 <span th:text="${post.publishedAt}"></span>
-                <p th:text="${post.excerpt}"></p>
-            </a>
+        <div class="post-list">
+            <div class="post-container" th:each="post : ${posts}">
+                <a th:href="@{'/post/'+${post.id}}">
+                    <h2 th:text="${post.title}"></h2>
+                    <span th:text="${post.author}"> </span>
+                     <span th:text="${post.publishedAt}"></span>
+                    <p th:text="${post.excerpt}"></p>
+                </a>
+            </div>
         </div>
     </div>
 </body>

@@ -12,8 +12,6 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
 
     List<Post> findAllByOrderByTitle();
 
-//    List<Post> findAllByAuthorNameOrTitleOrTagsNameOrContent(String authorName, String title, String tagName, String content);
-List<Post> findAllByAuthorNameContainingOrTitleContainingOrTagsNameContainingOrContentContaining(String authorName, String title, String tagName, String content);
-
+    List<Post> findAllByAuthorNameContainingOrTitleContainingOrTagsNameContainingOrContentContaining(String authorName, String title, String tagName, String content);
 
 }

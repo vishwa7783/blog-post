@@ -1,31 +1,61 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Blog Application</title>
     <link rel="stylesheet" href="style-show-posts.css">
-
 </head>
 <body>
     <h1>My Blog Application</h1>
     <div id="sort-search">
-        <form th:action="@{/}" method="post">
+        <form th:action="@{/sort}" method="get">
+            <input type="hidden" name="field" th:value="${field}">
             <select name="selectedOption" >
                 <option value="">Sort By</option>
                 <option value="date">Published Date</option>
                 <option value="title">Title</option>
             </select>
-            <button type="submit">Submit</button>
-        </form>
-
-        <form class="search-post" th:action="@{/search}" method="get">
-            <input class="search-button" type="text" name="field"  placeholder="Enter your search field">
+            <button  type="submit">Search</button>
+            </form>
+        <form th:action="@{/search}" method="get">
+            <input class="search-button" type="text" th:value="${field}" name="field"  placeholder="Enter your search field">
             <button class="search-button" type="submit">Search</button>
         </form>
     </div>
     <a th:href="@{/newpost}">Create New Post</a>
+
     <div class="main">
+
+
+        <div class="filter">
+            <form th:action="@{/filter}" method="GET">
+                <h3>Author</h3>
+                <label for="option1">
+                    <input type="checkbox" id="option1" name="option1" value="option1">
+                    Option 1
+                </label>
+                <br>
+                <label for="option2">
+                    <input type="checkbox" id="option2" name="option2" value="option2">
+                    Option 2
+                </label>
+                <br>
+                <h3>Title</h3>
+                <label for="option3">
+                    <input type="checkbox" id="option3" name="option3" value="option3">
+                    Option 1
+                </label>
+                <br>
+                <label for="option4">
+                    <input type="checkbox" id="option4" name="option4" value="option4">
+                    Option 2
+                </label>
+                <br>
+                <input type="submit" value="Submit">
+            </form>
+        </div>
+
 
         <div class="post-list">
             <div class="post-container" th:each="post : ${posts}">

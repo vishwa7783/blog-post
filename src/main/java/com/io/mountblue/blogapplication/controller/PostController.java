@@ -134,29 +134,38 @@ public class PostController {
         return "redirect:/";
     }
 
-    @PostMapping("/")
-    public String sortPosts(@ModelAttribute("selectedOption") String selectedOption, Model model){
-        if(selectedOption.equals("date")) {
-            List<Post> posts = postService.findAllPostSortedByDate();
-            model.addAttribute("posts", posts);
-        }
-        else if(selectedOption.equals("title")){
-            List<Post> posts = postService.findAllPostSortedByTitle();
-            model.addAttribute("posts", posts);
-        }else{
-            List<Post> posts = postService.getPosts();
-            model.addAttribute("posts",posts);
-        }
-        return "show-posts";
-    }
-
-    @GetMapping("/search")
-    public String searchPosts(@ModelAttribute("field") String field, Model model){
+    @GetMapping("/sort")
+    public String sortPosts(@ModelAttribute("field") String field, @ModelAttribute("selectedOption") String selectedOption, Model model){
         List<Post> posts = postService.findBySearchField(field,field,field,field);
+
+        if (selectedOption.equals("date")) {
+            posts.sort(Comparator.comparing(Post::getPublishedAt).reversed());
+        } else if (selectedOption.equals("title")) {
+            posts.sort(Comparator.comparing(Post::getTitle));
+        }
+
         model.addAttribute("posts", posts);
         return "show-posts";
     }
 
+    @GetMapping("/search")
+    public String searchPosts(@RequestParam("field") String field, Model model){
+        List<Post> posts = postService.findBySearchField(field,field,field,field);
 
+        model.addAttribute("field",field);
+        model.addAttribute("posts", posts);
+        return "show-posts";
+    }
+
+    @GetMapping("/filter")
+    public String applyFilter(@ModelAttribute("option1") String option1,
+                              @ModelAttribute("option2") String option2,@ModelAttribute("option3") String option3,
+                              @ModelAttribute("option4") String option4){
+        System.out.println(option1);
+        System.out.println(option2);
+        System.out.println(option3);
+        System.out.println(option4);
+        return "redirect:/";
+    }
 
 }

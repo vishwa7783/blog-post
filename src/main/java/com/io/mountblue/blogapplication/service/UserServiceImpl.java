@@ -5,6 +5,7 @@ import com.io.mountblue.blogapplication.entity.Post;
 import com.io.mountblue.blogapplication.entity.User;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -27,5 +28,10 @@ public class UserServiceImpl implements UserService{
             throw new RuntimeException("Did not find employee id - " + id);
         }
         return user;
+    }
+
+    @Override
+    public List<User> findAuthors() {
+        return userRepository.findAll();
     }
 }

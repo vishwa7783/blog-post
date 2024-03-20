@@ -9,53 +9,58 @@
 <body>
     <h1>My Blog Application</h1>
     <div id="sort-search">
-        <form th:action="@{/sort}" method="get">
+        <form th:action="@{/filter}" method="get">
             <input type="hidden" name="field" th:value="${field}">
             <select name="selectedOption" >
                 <option value="">Sort By</option>
-                <option value="date">Published Date</option>
-                <option value="title">Title</option>
+                <option value="latest">Latest</option>
+                <option value="oldest">Oldest</option>
             </select>
-            <button  type="submit">Search</button>
+            <button  type="submit">Sort</button>
             </form>
-        <form th:action="@{/search}" method="get">
+        <form th:action="@{/filter}" method="get">
             <input class="search-button" type="text" th:value="${field}" name="field"  placeholder="Enter your search field">
+            <input type="hidden" name="selectedOption" th:value="${selectedOption}">
             <button class="search-button" type="submit">Search</button>
         </form>
     </div>
     <a th:href="@{/newpost}">Create New Post</a>
 
     <div class="main">
-
-
         <div class="filter">
             <form th:action="@{/filter}" method="GET">
+                <h3>Select Date</h3>
+                <label for="start-date">Start Date:</label>
+                <input type="date" id="start-date" name="startDate" th:value="${startDate}" >
+                <br>
+                <input type="hidden" th:value="${field}" name="field">
+
+                <label for="end-date">End Date:</label>
+                <input type="date" id="end-date" name="endDate" th:value="${endDate}">
+
                 <h3>Author</h3>
-                <label for="option1">
-                    <input type="checkbox" id="option1" name="option1" value="option1">
-                    Option 1
-                </label>
+                <div class="filter-tags">
+                    <label th:for="${author.id}" th:each="author: ${authors}">
+                        <input type="checkbox" th:id="${author.id}" name="authorsName" th:value="${author.name}"
+                               th:checked="${authorsName!=null && authorsName.contains(author.name)}">
+                        <span th:text="${author.name}"></span>
+                    </label>
+                </div>
                 <br>
-                <label for="option2">
-                    <input type="checkbox" id="option2" name="option2" value="option2">
-                    Option 2
-                </label>
+
+                <h3>Tags</h3>
+                <div class="filter-tags">
+                    <label th:for=" ${tag.id}" th:each="tag: ${tags}">
+                        <input type="checkbox" th:id="${tag.id}" name="tagNames" th:value="${tag.name}"
+                               th:checked="${tagNames!=null && tagNames.contains(tag.name)}">
+                        <span th:text="${tag.name}"></span>
+                    </label>
+                </div>
                 <br>
-                <h3>Title</h3>
-                <label for="option3">
-                    <input type="checkbox" id="option3" name="option3" value="option3">
-                    Option 1
-                </label>
-                <br>
-                <label for="option4">
-                    <input type="checkbox" id="option4" name="option4" value="option4">
-                    Option 2
-                </label>
-                <br>
+
                 <input type="submit" value="Submit">
             </form>
         </div>
-
 
         <div class="post-list">
             <div class="post-container" th:each="post : ${posts}">
@@ -69,6 +74,4 @@
         </div>
     </div>
 </body>
-
-
 </html>

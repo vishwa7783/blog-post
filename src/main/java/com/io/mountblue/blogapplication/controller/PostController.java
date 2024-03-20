@@ -11,6 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.*;
 
 @Controller
@@ -27,8 +28,14 @@ public class PostController {
 
     @GetMapping("/")
     public String showPosts(Model model){
-        List<Post> posts = postService.getPosts();
+        List<Post> posts = postService.findAllPosts();
+        List<Tag> tags = tagService.findAllTags();
+        List<User> authors = userService.findAuthors();
+
+        model.addAttribute("authors", authors);
+        model.addAttribute("tags",tags);
         model.addAttribute("posts",posts);
+
         return "show-posts";
     }
 
@@ -45,28 +52,7 @@ public class PostController {
         Date currentDate = new Date();
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String date = dateFormat.format(currentDate);
-
-        List<String> tagsInPost = Arrays.asList(tags.split(","));
-        List<Tag> tagsInDB = tagService.findAllTags();
-        Set<String> tagsNameInDB = new HashSet<>();
-        for (Tag tag : tagsInDB) {
-            tagsNameInDB.add(tag.getName());
-        }
-
-        List<Tag> postTagList = new ArrayList<>();
-        post.setTags(postTagList);
-
-        for (String tag : tagsInPost) {
-            if (!tagsNameInDB.contains(tag)) {
-                Tag newTag = new Tag();
-                newTag.setName(tag);
-                tagService.saveTag(newTag);
-                postTagList.add(newTag);
-            } else {
-                Tag newTag = tagService.findTagByName(tag);
-                postTagList.add(newTag);
-            }
-        }
+        List<Tag> postTagList = tagService.tagHandlerInDb(tags);
 
         StringBuilder excerpt = new StringBuilder();
         if (post.getContent().length() > 151) {
@@ -109,8 +95,9 @@ public class PostController {
     @GetMapping("/update/{postId}")
     public String update(@PathVariable("postId")int id, Model model){
         Post post = postService.findPostById(id);
-
         List<Tag> tags = post.getTags();
+        List<User> authors = userService.findAuthors();
+
         StringBuilder tagAsString = new StringBuilder();
         for(Tag tempTag : tags){
             tagAsString.append(tempTag.getName()).append(",");
@@ -123,6 +110,8 @@ public class PostController {
         model.addAttribute("tagsAsString",tagAsString);
         model.addAttribute("post",post);
         model.addAttribute("presentPostId",post.getId());
+        model.addAttribute("tags", tags);
+        model.addAttribute("authors", authors);
 
         return "publish-form";
     }
@@ -134,38 +123,40 @@ public class PostController {
         return "redirect:/";
     }
 
-    @GetMapping("/sort")
-    public String sortPosts(@ModelAttribute("field") String field, @ModelAttribute("selectedOption") String selectedOption, Model model){
-        List<Post> posts = postService.findBySearchField(field,field,field,field);
-
-        if (selectedOption.equals("date")) {
-            posts.sort(Comparator.comparing(Post::getPublishedAt).reversed());
-        } else if (selectedOption.equals("title")) {
-            posts.sort(Comparator.comparing(Post::getTitle));
+    @GetMapping("/filter")
+    public String applyFilter(@RequestParam(required = false) Set<String> tagNames,
+                              @RequestParam(required = false) Set<String> authorsName, Model model,
+                              @RequestParam(name="startDate", required = false) String startDate,
+                              @RequestParam(name="endDate", required = false) String endDate,
+                              @RequestParam("field") String field){
+        if (startDate != null && startDate.isEmpty()) {
+            startDate = null;
+        }
+        if (endDate != null && endDate.isEmpty()) {
+            endDate = null;
         }
 
+        List<Post> posts = postService.getPostsBySearchWithFilter(field, authorsName, tagNames, startDate, endDate);
+        Set<Tag> tagsSet = new HashSet<>();
+        Set<User> usersSet = new HashSet<>();
+
+        for (Post post : posts) {
+            tagsSet.addAll(post.getTags());
+            usersSet.add(post.getAuthor());
+        }
+
+        List<User> users = new ArrayList<>(usersSet);
+        List<Tag> tags = new ArrayList<>(tagsSet);
+
+        model.addAttribute("field", field);
+        model.addAttribute("tags", tags);
         model.addAttribute("posts", posts);
+        model.addAttribute("authors", users);
+        model.addAttribute("startDate", startDate);
+        model.addAttribute("endDate", endDate);
+        model.addAttribute("tagNames", tagNames);
+        model.addAttribute("authorsName", authorsName);
+
         return "show-posts";
     }
-
-    @GetMapping("/search")
-    public String searchPosts(@RequestParam("field") String field, Model model){
-        List<Post> posts = postService.findBySearchField(field,field,field,field);
-
-        model.addAttribute("field",field);
-        model.addAttribute("posts", posts);
-        return "show-posts";
-    }
-
-    @GetMapping("/filter")
-    public String applyFilter(@ModelAttribute("option1") String option1,
-                              @ModelAttribute("option2") String option2,@ModelAttribute("option3") String option3,
-                              @ModelAttribute("option4") String option4){
-        System.out.println(option1);
-        System.out.println(option2);
-        System.out.println(option3);
-        System.out.println(option4);
-        return "redirect:/";
-    }
-
 }

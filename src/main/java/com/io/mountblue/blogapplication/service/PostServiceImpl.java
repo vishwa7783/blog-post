@@ -7,8 +7,11 @@ import com.io.mountblue.blogapplication.entity.User;
 import org.springframework.stereotype.Service;
 
 import javax.swing.text.html.Option;
+import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class PostServiceImpl implements PostService {
@@ -24,7 +27,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<Post> getPosts() {
+    public List<Post> findAllPosts() {
         return postRepository.findAll();
     }
 
@@ -48,18 +51,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<Post> findAllPostSortedByDate() {
-        return postRepository.findAllByOrderByPublishedAtDesc();
+    public List<Post> getPostsBySearchWithFilter(String field, Set<String> authors, Set<String> tagNames, String startDate, String endDate) {
+        return postRepository.findAllBySearchWithFilters(field, authors, tagNames, startDate, endDate);
     }
-
-    @Override
-    public List<Post> findAllPostSortedByTitle() {
-        return postRepository.findAllByOrderByTitle();
-    }
-
-    @Override
-    public List<Post> findBySearchField(String authorName, String title, String tagName, String content) {
-        return postRepository.findAllByAuthorNameContainingOrTitleContainingOrTagsNameContainingOrContentContaining(authorName, title, tagName, content);
-    }
-
 }

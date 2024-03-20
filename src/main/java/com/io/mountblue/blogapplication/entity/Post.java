@@ -41,7 +41,7 @@ public class Post {
     @JoinColumn(name = "author")
     private User author;
 
-    @ManyToMany(fetch = FetchType.LAZY,cascade = {
+    @ManyToMany(fetch = FetchType.EAGER,cascade = {
             CascadeType.PERSIST,CascadeType.DETACH,
             CascadeType.MERGE,CascadeType.REFRESH})
     @JoinTable(name = "post_tags",
@@ -154,5 +154,6 @@ public class Post {
         }
         comments.add(comment);
     }
+
 }
 

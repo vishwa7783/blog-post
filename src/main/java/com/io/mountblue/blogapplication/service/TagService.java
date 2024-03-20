@@ -11,4 +11,5 @@ public interface TagService {
 
     void saveTag(Tag tag);
 
+    List<Tag> tagHandlerInDb(String tags);
 }

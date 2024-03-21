@@ -1,17 +1,16 @@
 package com.io.mountblue.blogapplication.controller;
-
 import com.io.mountblue.blogapplication.entity.Post;
 import com.io.mountblue.blogapplication.entity.Tag;
 import com.io.mountblue.blogapplication.entity.User;
 import com.io.mountblue.blogapplication.service.PostService;
 import com.io.mountblue.blogapplication.service.TagService;
 import com.io.mountblue.blogapplication.service.UserService;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.*;
 
 @Controller
@@ -36,7 +35,7 @@ public class PostController {
         model.addAttribute("tags",tags);
         model.addAttribute("posts",posts);
 
-        return "show-posts";
+        return findPaginated(1,model);
     }
 
     @GetMapping("/newpost")
@@ -44,11 +43,14 @@ public class PostController {
         Post post = new Post();
         model.addAttribute("post",post);
         model.addAttribute("presentPostId", 0);
+
         return "publish-form";
     }
 
     @PostMapping("/publishform")
-    public String publishForm( @ModelAttribute("post") Post post,@RequestParam("tag") String tags, @ModelAttribute("presentPostId") int presentPostId){
+    public String publishForm( @ModelAttribute("post") Post post,
+                               @RequestParam("tag") String tags,
+                               @RequestParam("presentPostId") int presentPostId){
         Date currentDate = new Date();
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String date = dateFormat.format(currentDate);
@@ -71,8 +73,7 @@ public class PostController {
             post.setUpdatedAt(date);
             post.setCreatedAt(date);
 
-        }
-        else{
+        }else{
             post.setUpdatedAt(date);
             post.setPublishedAt(post.getCreatedAt());
         }
@@ -117,26 +118,22 @@ public class PostController {
     }
 
     @GetMapping("/delete/{postId}")
-    public String deletePost(@PathVariable("postId")int id, Model model){
+    public String deletePost(@PathVariable("postId")int id){
         Post post = postService.findPostById(id);
         postService.deletePost(post);
         return "redirect:/";
     }
 
-    @GetMapping("/filter")
+    @GetMapping("/filter/{pageNo}")
     public String applyFilter(@RequestParam(required = false) Set<String> tagNames,
                               @RequestParam(required = false) Set<String> authorsName, Model model,
                               @RequestParam(name="startDate", required = false) String startDate,
                               @RequestParam(name="endDate", required = false) String endDate,
-                              @RequestParam("field") String field){
-        if (startDate != null && startDate.isEmpty()) {
-            startDate = null;
-        }
-        if (endDate != null && endDate.isEmpty()) {
-            endDate = null;
-        }
-
-        List<Post> posts = postService.getPostsBySearchWithFilter(field, authorsName, tagNames, startDate, endDate);
+                              @RequestParam(value = "field",required = false) String field,
+                              @RequestParam(value = "sortDir",required = false) String sortDir,
+                              @PathVariable("pageNo") int pageNo){
+        Page<Post> page = postService.getPostsBySearchWithFilter(field, authorsName, tagNames, startDate, endDate,pageNo, sortDir);
+        List<Post> posts = page.getContent();
         Set<Tag> tagsSet = new HashSet<>();
         Set<User> usersSet = new HashSet<>();
 
@@ -148,6 +145,10 @@ public class PostController {
         List<User> users = new ArrayList<>(usersSet);
         List<Tag> tags = new ArrayList<>(tagsSet);
 
+        model.addAttribute("posts", posts);
+        model.addAttribute("totalPages", page.getTotalPages());
+        model.addAttribute("totalItems", page.getTotalElements());
+        model.addAttribute("currentPage", pageNo);
         model.addAttribute("field", field);
         model.addAttribute("tags", tags);
         model.addAttribute("posts", posts);
@@ -156,6 +157,20 @@ public class PostController {
         model.addAttribute("endDate", endDate);
         model.addAttribute("tagNames", tagNames);
         model.addAttribute("authorsName", authorsName);
+
+        return "show-posts";
+    }
+
+    @GetMapping("/page/{pageNo}")
+    public String findPaginated(@PathVariable("pageNo") int pageNo, Model model){
+        int pageSize = 2;
+        Page<Post> page = postService.getPaginatedPosts(pageNo, pageSize);
+        List<Post> posts = page.getContent();
+
+        model.addAttribute("posts", posts);
+        model.addAttribute("totalPages", page.getTotalPages());
+        model.addAttribute("totalItems", page.getTotalElements());
+        model.addAttribute("currentPage", pageNo);
 
         return "show-posts";
     }

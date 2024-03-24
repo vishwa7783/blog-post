@@ -2,9 +2,13 @@ package com.io.mountblue.blogapplication.controller;
 
 import com.io.mountblue.blogapplication.entity.Comment;
 import com.io.mountblue.blogapplication.entity.Post;
+import com.io.mountblue.blogapplication.entity.User;
 import com.io.mountblue.blogapplication.service.CommentService;
 import com.io.mountblue.blogapplication.service.PostService;
+import com.io.mountblue.blogapplication.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -13,15 +17,24 @@ import java.time.LocalDateTime;
 
 @Controller
 public class CommentController {
-    @Autowired
+
     PostService postService;
-    @Autowired
     CommentService commentService;
+    UserService userService;
+
+    @Autowired
+    public CommentController(PostService postService, CommentService commentService, UserService userService) {
+        this.postService = postService;
+        this.commentService = commentService;
+        this.userService = userService;
+    }
 
     @GetMapping("/post/comment/{postId}")
-    public String writeComment(@PathVariable("postId")int id, Model model){
+    public String writeComment(@PathVariable("postId")int id, Model model,
+                               @AuthenticationPrincipal UserDetails userDetails){
         Post post = postService.findPostById(id);
         Integer presentCommentId = 0;
+        model.addAttribute("currentUser", userDetails.getUsername());
         model.addAttribute("post", post);
         model.addAttribute("presentCommentId", presentCommentId);
         return "comment";
@@ -30,22 +43,10 @@ public class CommentController {
     @PostMapping("/savecomment")
     public String saveComment(@RequestParam("postId")int id,
                               @ModelAttribute("post")Post post, @RequestParam("commentText")String comment,
-                             @ModelAttribute("presentCommentId") int presentCommentId){
-        if(presentCommentId == 0) {
-            Comment theComment = new Comment("anonymous", "anonymous@gmail.com", comment);
-            post.addComment(theComment);
-            theComment.setPostId(id);
-
-            theComment.setCreatedAt(String.valueOf(LocalDateTime.now()));
-            theComment.setUpdatedAt(String.valueOf(LocalDateTime.now()));
-
-            commentService.saveComment(theComment);
-        }else{
-            Comment comment1 = commentService.findCommentById(presentCommentId);
-            comment1.setComment(comment);
-            comment1.setUpdatedAt(String.valueOf(LocalDateTime.now()));
-            commentService.saveComment(comment1);
-        }
+                              @ModelAttribute("presentCommentId") int presentCommentId,
+                              @AuthenticationPrincipal UserDetails userDetails){
+        User author = userService.findUserByName(userDetails.getUsername());
+        commentService.saveComment(author, presentCommentId, post, comment, id);
 
         return "redirect:/post/" + id;
     }

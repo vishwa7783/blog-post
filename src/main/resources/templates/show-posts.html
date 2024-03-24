@@ -1,5 +1,7 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -30,7 +32,7 @@
             font-size:15px;
             margin-left:5px;
         }
-        a {
+        a, .logout {
             display: block;
             margin: 10px 0;
             padding: 10px 15px;
@@ -113,6 +115,10 @@
 </head>
 <body>
     <h1>My Blog Application</h1>
+    <a th:href="@{/login}" sec:authorize="!isAuthenticated()"><input type="submit" value="Login" ></a>
+    <form class="logout" th:action="@{/logout}" method="post">
+        <input type="submit" value="Logout" sec:authorize="hasAnyRole('ROLE_AUTHOR', 'ROLE_ADMIN')">
+    </form>
     <div id="sort-search">
         <form th:action="@{'/filter/'+${currentPage}}" method="get">
             <input type="hidden" name="field" th:value="${field}">

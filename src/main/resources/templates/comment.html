@@ -1,8 +1,19 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
 <head>
     <meta charset="UTF-8">
     <title>Post Comment</title>
+    <style>
+        .comment{
+            padding:20px;
+            margin:20px;
+            border:2px solid black;
+            height:140px;
+            width:150px;
+        }
+    </style>
 </head>
 <body>
 <div id="comment-section">
@@ -16,20 +27,22 @@
     </form>
 
     <div class="comment" th:each="comment:${post.getComments()}">
-        <div>
             <p th:text="${comment.name}"></p>
             <input type="hidden" name="commentId" th:value="${comment.id}" />
             <input type="hidden" name="commentPostId" th:value="${comment.postId}" />
             <p th:text="${comment.email}"></p>
             <p th:text="${comment.comment}"></p>
-            <a th:href="@{'/updatecomment/'+${comment.id} + '/' + ${comment.postId}}">
+        <div class="update-delete" sec:authorize="hasRole('ADMIN') or hasRole('AUTHOR')" >
+            <a th:href="@{'/updatecomment/'+${comment.id} + '/' + ${comment.postId}}" th:if="${currentUser == comment.name }">
                 <button>Update</button>
             </a>
-            <a th:href="@{'/deletecomment/' + ${comment.id} + '/' + ${comment.postId}}">
+            <a th:href="@{'/deletecomment/' + ${comment.id} + '/' + ${comment.postId}}" th:if="${comment.name == currentUser}">
                 <button>Delete</button>
             </a>
         </div>
     </div>
+
+
 </div>
 
 </body>

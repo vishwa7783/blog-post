@@ -5,7 +5,10 @@ import com.io.mountblue.blogapplication.entity.User;
 import com.io.mountblue.blogapplication.service.PostService;
 import com.io.mountblue.blogapplication.service.TagService;
 import com.io.mountblue.blogapplication.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +22,7 @@ public class PostController {
     TagService tagService;
     UserService userService;
 
+    @Autowired
     public PostController(PostService postService,TagService tagService,UserService userService){
         this.postService = postService;
         this.tagService = tagService;
@@ -50,7 +54,8 @@ public class PostController {
     @PostMapping("/publishform")
     public String publishForm( @ModelAttribute("post") Post post,
                                @RequestParam("tag") String tags,
-                               @RequestParam("presentPostId") int presentPostId){
+                               @RequestParam("presentPostId") int presentPostId,
+                               @AuthenticationPrincipal UserDetails userDetails){
         Date currentDate = new Date();
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String date = dateFormat.format(currentDate);
@@ -64,15 +69,13 @@ public class PostController {
         }
 
         post.setTags(postTagList);
-        User theUser = userService.findUserById(12);
+        User theUser = userService.findUserByName(userDetails.getUsername());
         post.setAuthor(theUser);
 
         if(presentPostId == 0) {
-            User user = new User("v", "v10@gmail.com", "1234");
             post.setPublishedAt(date);
             post.setUpdatedAt(date);
             post.setCreatedAt(date);
-
         }else{
             post.setUpdatedAt(date);
             post.setPublishedAt(post.getCreatedAt());
@@ -86,15 +89,19 @@ public class PostController {
     }
 
     @GetMapping("/post/{postId}")
-    public String showSinglePost(@PathVariable("postId")int id, Model model){
+    public String showSinglePost(@PathVariable("postId")int id, Model model,
+                                 @AuthenticationPrincipal UserDetails userDetails){
         Post post = postService.findPostById(id);
         model.addAttribute("post",post);
-
+        if(userDetails != null) {
+            model.addAttribute("currentUser", userDetails.getUsername());
+        }
         return "post";
     }
 
     @GetMapping("/update/{postId}")
-    public String update(@PathVariable("postId")int id, Model model){
+    public String update(@PathVariable("postId")int id, Model model,
+                         @AuthenticationPrincipal UserDetails userDetails){
         Post post = postService.findPostById(id);
         List<Tag> tags = post.getTags();
         List<User> authors = userService.findAuthors();

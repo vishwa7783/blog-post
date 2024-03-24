@@ -3,7 +3,6 @@ package com.io.mountblue.blogapplication.security;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
@@ -16,7 +15,7 @@ public class SecurityConfiguration {
     public SecurityFilterChain filterChain(HttpSecurity http)throws Exception{
         http.authorizeHttpRequests(configurer ->
                 configurer
-                        .requestMatchers("/", "/signup", "/saveUser", "/filter/{postId}").permitAll()
+                        .requestMatchers("/", "/signup", "/saveUser", "/filter/{postId}","/post/{postId}").permitAll()
                         .requestMatchers("/**").hasAnyRole("ADMIN", "AUTHOR")
                         .anyRequest().authenticated()
         ).formLogin(form ->
@@ -24,6 +23,8 @@ public class SecurityConfiguration {
                         .loginPage("/login")
                         .loginProcessingUrl("/authenticateTheUser")
                         .permitAll()
+        )
+        .logout(logout -> logout.permitAll()
         );
         return http.build();
     }

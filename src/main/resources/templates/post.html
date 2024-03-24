@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <title>Post</title>
@@ -29,24 +30,21 @@
     </style>
 </head>
 <body>
-<form class="post-container" th:action="@{/publishform}" th:object="${post}" method="GET">
+    <form class="post-container" th:action="@{/publishform}" th:object="${post}" method="GET">
+        <h1 th:text="*{title}"></h1>
+        <br />
+        <span th:text="*{author}"></span>
+        <span th:text="*{publishedAt}"></span>
+        <br />
+        <p th:text="*{content}"></p>
+        <br />
+    </form>
 
-    <h1 th:text="*{title}"></h1>
-    <br />
-    <span th:text="*{author}"></span>
-    <span th:text="*{publishedAt}"></span>
-    <br />
-    <p th:text="*{content}"></p>
-    <br />
-
-</form>
-
-<div class="update-delete">
-    <a th:href="@{'/update/'+${post.id}}"><button>Update</button></a>
-
-    <a th:href="@{'/delete/'+${post.id}}"><button>Delete</button></a>
-    <a th:href="@{'/post/comment/'+${post.id}}"><button>Comment</button></a>
-</div>
+    <div sec:authorize="hasRole('ADMIN') or hasRole('AUTHOR')">
+        <a th:href="@{'/update/'+${post.id}}" th:if="${post.author.name == currentUser}"><button>Update</button></a>
+        <a th:href="@{'/delete/'+${post.id}}" th:if="${post.author.name == currentUser}"><button>Delete</button></a>
+        <a th:href="@{'/post/comment/'+${post.id}}"><button>Comment</button></a>
+    </div>
 
 </body>
 </html>

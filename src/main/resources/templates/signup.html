@@ -4,18 +4,20 @@
     <meta charset="UTF-8">
     <title>Sign up Page</title>
     <style>
-        .signup{
-            text-align:center;
-            font-size:large;
+        body{
             border:2px solid black;
             margin:50px;
             width:450px;
-            height:250px;
+            height:300px;
+        }
+         p, .signup{
+            text-align:center;
+            font-size:large;
         }
     </style>
 </head>
 <body>
-    <form class="signup" th:action="@{/saveUser}" th:object="${user}"  >
+    <form class="signup" th:action="@{/saveUser}" th:object="${user}" method="post" >
         <h2> Sign up here.....</h2>
         <p>
             User name: <input type="text" name="name" th:field="*{name}">
@@ -28,5 +30,8 @@
         </p>
         <input type="submit" value="Register">
     </form>
+    <p>Already a user.
+        <a th:href="@{/login}"><input type="submit" value="Back to login"></a>
+    </p>
 </body>
 </html>

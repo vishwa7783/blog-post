@@ -62,7 +62,7 @@ public class PostServiceImpl implements PostService {
         String sortBy = "publishedAt";
         Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name())
                 ? Sort.by(sortBy).ascending(): Sort.by(sortBy).descending();
-        Pageable pageable = PageRequest.of(pageNo - 1,2, sort);
+        Pageable pageable = PageRequest.of(pageNo - 1,10, sort);
         return postRepository.findAllBySearchWithFilters(field, authors, tagNames, startDate, endDate, pageable);
     }
 

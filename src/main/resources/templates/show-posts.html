@@ -101,9 +101,10 @@
         .pagination .current-page {
             font-weight: bold;
         }
-        .pagination .next-page, .pagination .last-page {
+        .pagination .next-page, .pagination .prev-page {
             margin-left: 10px;
             margin-top:10px;
+
         }
         .pagination .disabled {
             color: gray;
@@ -204,10 +205,10 @@
             </div>
 
             <div class="col">
-                <form th:action="@{'/filter/' + ${totalPages}}" class="last-page">
+                <form th:action="@{'/filter/' + ${currentPage - 1}}" class="prev-page">
                     <input type="hidden" th:name="field" th:value="${field}">
-                    <input type="submit" th:if="${currentPage < totalPages}" value="Last">
-                    <span th:unless="${currentPage < totalPages}" class="last-page">Last</span>
+                    <input type="submit" th:if="${currentPage > 1}" value="Previous">
+                    <span th:unless="${currentPage > 1 }" class="prev-page">Previous</span>
                 </form>
             </div>
 

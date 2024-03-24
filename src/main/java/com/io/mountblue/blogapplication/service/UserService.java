@@ -7,4 +7,8 @@ import java.util.List;
 public interface UserService {
     User findUserById(int id);
     List<User> findAuthors();
+
+    User findUserByName(String name);
+
+    void save(User user);
 }

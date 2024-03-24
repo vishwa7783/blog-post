@@ -1,7 +1,7 @@
 package com.io.mountblue.blogapplication.service;
 
 import com.io.mountblue.blogapplication.dao.UserRepository;
-import com.io.mountblue.blogapplication.entity.Post;
+import com.io.mountblue.blogapplication.entity.Role;
 import com.io.mountblue.blogapplication.entity.User;
 import org.springframework.stereotype.Service;
 
@@ -11,6 +11,7 @@ import java.util.Optional;
 @Service
 public class UserServiceImpl implements UserService{
     UserRepository userRepository;
+
     UserServiceImpl(UserRepository userRepository){
         this.userRepository = userRepository;
     }
@@ -24,8 +25,7 @@ public class UserServiceImpl implements UserService{
             user = result.get();
         }
         else {
-            // we didn't find the employee
-            throw new RuntimeException("Did not find employee id - " + id);
+            throw new RuntimeException("Did not find user id - " + id);
         }
         return user;
     }
@@ -34,4 +34,27 @@ public class UserServiceImpl implements UserService{
     public List<User> findAuthors() {
         return userRepository.findAll();
     }
+
+    @Override
+    public User findUserByName(String name) {
+        return userRepository.findByName(name);
+    }
+
+    @Override
+    public void save(User user) {
+        String name = user.getName();
+        User existingUser = findUserByName(user.getName());
+        if(existingUser == null){
+            String password =user.getPassword();
+            user.setPassword("{noop}"+password);
+            Role role = new Role();
+            role.setRole("ROLE_AUTHOR");
+            user.setRole(role);
+            role.setUsername(user.getName());
+            user.setEnabled(true);
+            userRepository.save(user);
+        }
+    }
+
+
 }

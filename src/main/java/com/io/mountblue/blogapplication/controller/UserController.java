@@ -35,4 +35,9 @@ public class UserController {
         userService.save(user);
         return "redirect:/";
     }
+
+    @GetMapping("/access-denied")
+    public String accessDenied(){
+        return "access-denied";
+    }
 }

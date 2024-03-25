@@ -4,7 +4,6 @@ import com.io.mountblue.blogapplication.dao.CommentRepository;
 import com.io.mountblue.blogapplication.entity.Comment;
 import com.io.mountblue.blogapplication.entity.Post;
 import com.io.mountblue.blogapplication.entity.User;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;

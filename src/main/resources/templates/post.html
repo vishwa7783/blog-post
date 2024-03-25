@@ -27,6 +27,9 @@
         .update-delete{
             margin:10px;
         }
+        div form{
+         display:inline-block;
+        }
     </style>
 </head>
 <body>
@@ -41,10 +44,9 @@
     </form>
 
     <div sec:authorize="hasRole('ADMIN') or hasRole('AUTHOR')">
-        <a th:href="@{'/update/'+${post.id}}" th:if="${post.author.name == currentUser}"><button>Update</button></a>
-        <a th:href="@{'/delete/'+${post.id}}" th:if="${post.author.name == currentUser}"><button>Delete</button></a>
+        <form th:action="@{'/update/'+${post.id}}" th:if="${#authorization.expression('hasRole(''ADMIN'')') or (post.author.name == currentUser)}" ><button>Update</button></form>
+        <form th:action="@{'/delete/'+${post.id}}" th:if="${#authorization.expression('hasRole(''ADMIN'')')or (post.author.name == currentUser)}" ><button>Delete</button></form>
         <a th:href="@{'/post/comment/'+${post.id}}"><button>Comment</button></a>
     </div>
-
 </body>
 </html>

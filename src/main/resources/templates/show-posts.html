@@ -134,7 +134,7 @@
             <button class="search-button" type="submit">Search</button>
         </form>
     </div>
-    <a th:href="@{/newpost}">Create New Post</a>
+    <a th:href="@{/newpost}" sec:authorize="isAuthenticated()">Create New Post</a>
 
     <div class="main">
         <div class="filter">
@@ -217,9 +217,7 @@
                     <span th:unless="${currentPage > 1 }" class="prev-page">Previous</span>
                 </form>
             </div>
-
         </div>
     </div>
-
 </body>
 </html>

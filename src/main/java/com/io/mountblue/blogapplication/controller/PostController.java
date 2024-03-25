@@ -56,34 +56,8 @@ public class PostController {
                                @RequestParam("tag") String tags,
                                @RequestParam("presentPostId") int presentPostId,
                                @AuthenticationPrincipal UserDetails userDetails){
-        Date currentDate = new Date();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String date = dateFormat.format(currentDate);
         List<Tag> postTagList = tagService.tagHandlerInDb(tags);
-
-        StringBuilder excerpt = new StringBuilder();
-        if (post.getContent().length() > 151) {
-            excerpt.append(post.getContent(), 0, 150);
-        } else {
-            excerpt.append(post.getContent());
-        }
-
-        post.setTags(postTagList);
-        User theUser = userService.findUserByName(userDetails.getUsername());
-        post.setAuthor(theUser);
-
-        if(presentPostId == 0) {
-            post.setPublishedAt(date);
-            post.setUpdatedAt(date);
-            post.setCreatedAt(date);
-        }else{
-            post.setUpdatedAt(date);
-            post.setPublishedAt(post.getCreatedAt());
-        }
-
-        post.setExcerpt(excerpt.toString());
-        post.setPublished(true);
-        postService.publish(post);
+        postService.publish(post, postTagList, userDetails, presentPostId);
 
         return "redirect:/";
     }
@@ -100,8 +74,7 @@ public class PostController {
     }
 
     @GetMapping("/update/{postId}")
-    public String update(@PathVariable("postId")int id, Model model,
-                         @AuthenticationPrincipal UserDetails userDetails){
+    public String update(@PathVariable("postId")int id, Model model){
         Post post = postService.findPostById(id);
         List<Tag> tags = post.getTags();
         List<User> authors = userService.findAuthors();

@@ -33,7 +33,7 @@ public class UserController {
     @PostMapping("/saveUser")
     public String saveUser(@ModelAttribute("user") User user){
         userService.save(user);
-        return "redirect:/";
+        return "login";
     }
 
     @GetMapping("/access-denied")

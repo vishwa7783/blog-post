@@ -33,10 +33,10 @@
             <p th:text="${comment.email}"></p>
             <p th:text="${comment.comment}"></p>
         <div class="update-delete" sec:authorize="hasRole('ADMIN') or hasRole('AUTHOR')" >
-            <a th:href="@{'/updatecomment/'+${comment.id} + '/' + ${comment.postId}}" th:if="${currentUser == comment.name }">
+            <a th:href="@{'/updatecomment/'+${comment.id} + '/' + ${comment.postId}}" th:if="${#authorization.expression('hasRole(''ADMIN'')')or (post.author.name == currentUser)}">
                 <button>Update</button>
             </a>
-            <a th:href="@{'/deletecomment/' + ${comment.id} + '/' + ${comment.postId}}" th:if="${comment.name == currentUser}">
+            <a th:href="@{'/deletecomment/' + ${comment.id} + '/' + ${comment.postId}}" th:if="${#authorization.expression('hasRole(''ADMIN'')')or (post.author.name == currentUser)}">
                 <button>Delete</button>
             </a>
         </div>

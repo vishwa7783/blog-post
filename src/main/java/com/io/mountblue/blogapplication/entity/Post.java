@@ -1,6 +1,7 @@
 package com.io.mountblue.blogapplication.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -34,6 +35,7 @@ public class Post {
     @Column(name = "updated_at")
     private String updatedAt;
 
+    @JsonIgnore
     @ManyToOne(fetch= FetchType.LAZY, cascade = {
             CascadeType.DETACH,
             CascadeType.PERSIST,
@@ -41,7 +43,8 @@ public class Post {
     @JoinColumn(name = "author")
     private User author;
 
-    @ManyToMany(fetch = FetchType.EAGER,cascade = {
+    @JsonIgnore
+    @ManyToMany(fetch = FetchType.LAZY,cascade = {
             CascadeType.PERSIST,CascadeType.DETACH,
             CascadeType.MERGE,CascadeType.REFRESH})
     @JoinTable(name = "post_tags",
@@ -49,7 +52,8 @@ public class Post {
             inverseJoinColumns = @JoinColumn(name = "tag_id"))
     private List<Tag> tags;
 
-    @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @JsonIgnore
+    @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
     private List<Comment> comments;
 
@@ -154,6 +158,5 @@ public class Post {
         }
         comments.add(comment);
     }
-
 }
 

@@ -4,6 +4,7 @@ import com.io.mountblue.blogapplication.dao.UserRepository;
 import com.io.mountblue.blogapplication.entity.Role;
 import com.io.mountblue.blogapplication.entity.User;
 import org.springframework.stereotype.Service;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.List;
 import java.util.Optional;
@@ -42,11 +43,13 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public void save(User user) {
-        String name = user.getName();
         User existingUser = findUserByName(user.getName());
         if(existingUser == null){
-            String password =user.getPassword();
-            user.setPassword("{noop}"+password);
+            String password = user.getPassword();
+            BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+            String encodedPassword = passwordEncoder.encode(password);
+            user.setPassword(encodedPassword);
+
             Role role = new Role();
             role.setRole("ROLE_AUTHOR");
             user.setRole(role);
